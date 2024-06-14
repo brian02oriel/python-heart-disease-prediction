@@ -5,21 +5,19 @@ from classes.ModelPipeline import ModelPipeline
 
 app = Flask(__name__)
 
-# Load the model
-model = joblib.load('model-registry/heart_disease_prediction.joblib')
-
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         data = request.get_json(force=True)
         pipeline = ModelPipeline(data)
         data = pipeline.execute()
-        #prediction = model.predict(np.array(data['input']).reshape(1, -1))
+        model = joblib.load('model-registry/heart_disease_prediction.joblib')
+        prediction = model.predict(data.reshape(1, -1))
     except Exception as error:
         print(error)
         return jsonify({'error': error})
     else:
-        return data.to_json() #jsonify({'prediction': prediction.tolist()})
+        return jsonify(prediction)
 
 @app.route('/', methods=['GET'])
 def test():

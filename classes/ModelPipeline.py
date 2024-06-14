@@ -1,9 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
-from sklearn.impute import SimpleImputer
+import joblib
 
 class ModelPipeline:
     def __init__(
@@ -42,5 +39,14 @@ class ModelPipeline:
         for col in numerical_features:
             df[col] = df[col].astype(float)
         df = self.get_features(df)
+
+        loaded_pipeline = joblib.load('pipelines/pipeline.joblib')
+        columns_transformed = numerical_features + list(loaded_pipeline.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out(categorical_features))
+
+        df_transformed = loaded_pipeline.transform(df)
+
+        df_transformed = pd.DataFrame(df_transformed, columns=columns_transformed)
+        print(df_transformed)
+        return df_transformed
 
     
