@@ -34,16 +34,26 @@ class ModelPipeline:
         
         
         numerical_features = ['age', 'resting_blood_pressure', 'serum_cholestoral', 'max_heart_rate', 'oldpeak', 'ST_segment', 'major_vessels']
-        categorical_features = ['sex_', 'age_category', 'chest_pain_type', 'fasting_blood_sugar', 'resting_electrocardiographic_results', 'exercise_induced_angina', 'thal']
-
+        # TODO: save the feature columns for the prediction
+        
+        features = ['age', 'resting_blood_pressure', 'serum_cholestoral', 'max_heart_rate',
+       'oldpeak', 'ST_segment', 'major_vessels', 'sex__0.0', 'sex__1.0',
+       'age_category_2030.0', 'age_category_3040.0', 'age_category_4050.0',
+       'age_category_5060.0', 'age_category_6070.0', 'age_category_7080.0',
+       'chest_pain_type_1.0', 'chest_pain_type_2.0', 'chest_pain_type_3.0',
+       'chest_pain_type_4.0', 'fasting_blood_sugar_0.0',
+       'fasting_blood_sugar_1.0', 'resting_electrocardiographic_results_0.0',
+       'resting_electrocardiographic_results_1.0',
+       'resting_electrocardiographic_results_2.0',
+       'exercise_induced_angina_0.0', 'exercise_induced_angina_1.0',
+       'thal_3.0', 'thal_6.0', 'thal_7.0']
         for col in numerical_features:
             df[col] = df[col].astype(float)
         df = self.get_features(df)
 
-        columns_transformed = numerical_features + list(preprocessor.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out(categorical_features))
         pipeline = joblib.load('pipelines/pipeline.joblib')
-
-        df = pipeline.transform(df)
+        print(pipeline.feature_names_in_)
+        df = pd.DataFrame(data=pipeline.transform(df), columns=features)
         print(df)
         return df
 

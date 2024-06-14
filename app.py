@@ -12,12 +12,13 @@ def predict():
         pipeline = ModelPipeline(data)
         data = pipeline.execute()
         model = joblib.load('model-registry/heart_disease_prediction.joblib')
-        prediction = model.predict(data.reshape(1, -1))
+        prediction = model.predict_proba(data)
+        print(prediction)
     except Exception as error:
         print(error)
         return jsonify({'error': error})
     else:
-        return jsonify(prediction)
+        return jsonify(prediction.tolist())
 
 @app.route('/', methods=['GET'])
 def test():
