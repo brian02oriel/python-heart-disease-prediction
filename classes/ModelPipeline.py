@@ -40,13 +40,11 @@ class ModelPipeline:
             df[col] = df[col].astype(float)
         df = self.get_features(df)
 
-        loaded_pipeline = joblib.load('pipelines/pipeline.joblib')
-        columns_transformed = numerical_features + list(loaded_pipeline.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out(categorical_features))
+        columns_transformed = numerical_features + list(preprocessor.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out(categorical_features))
+        pipeline = joblib.load('pipelines/pipeline.joblib')
 
-        df_transformed = loaded_pipeline.transform(df)
-
-        df_transformed = pd.DataFrame(df_transformed, columns=columns_transformed)
-        print(df_transformed)
-        return df_transformed
+        df = pipeline.transform(df)
+        print(df)
+        return df
 
     
