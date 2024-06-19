@@ -5,15 +5,17 @@ from classes.ModelPipeline import ModelPipeline
 
 app = Flask(__name__)
 
-@app.route('/predict', methods=['POST'])
+@app.route('/', methods=['POST'])
 def predict():
     try:
         data = request.get_json(force=True)
         pipeline = ModelPipeline(data)
         data = pipeline.execute()
         model = joblib.load('model-registry/heart_disease_prediction.joblib')
+        if model:
+            print("Model loaded successfully.")
         prediction = model.predict_proba(data)
-        print(prediction)
+        print(f'prediction: {prediction}')
     except Exception as error:
         print(error)
         return jsonify({'error': error})
